@@ -13,3 +13,4 @@ dist/
 site/
 src/wagtailbakery/build/
 src/wagtailbakery/tests/public/
+.idea/

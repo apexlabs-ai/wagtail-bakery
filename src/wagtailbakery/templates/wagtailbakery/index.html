@@ -1,0 +1,43 @@
+{% extends "wagtailadmin/base.html" %}
+{% load i18n %}
+
+{% block titletag %}{% blocktrans %}Publish site via bakery{% endblocktrans %}{% endblock %}
+{% block content %}
+{% trans "Bakery" as title_str %}
+{% include "wagtailadmin/shared/header.html" with title=title_str icon=bakery_icon %}
+
+<div class="nice-padding">
+    <p>
+        <a href="{% url 'wagtailbakery_admin:publish' %}"
+           class="button button-longrunning"
+           id="wagtailbakery-publish"
+           data-clicked-text="{% trans 'Publishing site…' %}">
+            {% trans "Publish site" %}
+        </a>
+        <script>
+            $(document).on('click', 'a#wagtailbakery-publish', function(event) {
+                event.preventDefault();
+                $el = $(this);
+                // show spinner
+                $el.addClass('icon icon-spinner');
+                oldtext = $el.html();
+                $el.html($el.data("clicked-text"));
+                // make ajax call
+                $.ajax({
+                    url: $el.attr('href')
+                })
+                    .done(function(data) {
+                        $el.after("<div>" + data + "</div>");
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                        $el.after("<div>" + errorThrown + "</div>");
+                    })
+                    .always(function(msg) {
+                        $el.removeClass('icon icon-spinner');
+                        $el.html(oldtext);
+                    });
+            });
+        </script>
+    </p>
+</div>
+{% endblock %}
